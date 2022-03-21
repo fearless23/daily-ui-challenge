@@ -1,8 +1,36 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
+import { Shell } from '@base';
+import type { AppProps } from 'next/app';
+import { MantineProvider } from '@mantine/core';
+import { AppConfigProvider, useAppConfig } from '@context';
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+interface Props {
+  cmp: JSX.Element
 }
 
-export default MyApp
+const MantineLayout = (props: Props) => {
+  const appConfig = useAppConfig();
+  return (
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={{
+        /** Put your mantine theme override here */
+        colorScheme: appConfig.colorScheme as any,
+      }}
+    >
+      <Shell>
+        {props.cmp}
+      </Shell>
+    </MantineProvider>
+  );
+};
+
+const MyApp = ({ Component, pageProps }: AppProps) => {
+  return (
+    <AppConfigProvider>
+      <MantineLayout cmp={<Component {...pageProps} />}/>
+    </AppConfigProvider>
+  );
+};
+
+export default MyApp;
